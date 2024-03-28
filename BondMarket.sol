@@ -17,8 +17,20 @@ contract BondMarket {
     mapping(address => uint256[]) public ownedBonds; // Mapping of address to array of owned bond IDs
     mapping(uint256 => mapping(address => uint256)) public bondBalances; // Mapping of bond ID to owner address to bond balance
 
-    event BondIssued(uint256 indexed id, string name, uint256 faceValue, uint256 maturityDate, uint256 couponRate, uint256 supply, address indexed issuer);
-    event BondPurchased(uint256 indexed id, address indexed buyer, uint256 amount);
+    event BondIssued(
+        uint256 indexed id,
+        string name,
+        uint256 faceValue,
+        uint256 maturityDate,
+        uint256 couponRate,
+        uint256 supply,
+        address indexed issuer
+    );
+    event BondPurchased(
+        uint256 indexed id,
+        address indexed buyer,
+        uint256 amount
+    );
     event BondSold(uint256 indexed id, address indexed seller, uint256 amount);
 
     // Function to issue a new bond
@@ -29,7 +41,10 @@ contract BondMarket {
         uint256 _couponRate,
         uint256 _supply
     ) external {
-        require(_maturityDate > block.timestamp, "Maturity date must be in the future");
+        require(
+            _maturityDate > block.timestamp,
+            "Maturity date must be in the future"
+        );
         require(_couponRate > 0, "Coupon rate must be greater than zero");
         require(_supply > 0, "Supply must be greater than zero");
 
@@ -46,7 +61,15 @@ contract BondMarket {
         bonds[nextBondId] = newBond;
         nextBondId++;
 
-        emit BondIssued(newBond.id, newBond.name, newBond.faceValue, newBond.maturityDate, newBond.couponRate, newBond.remainingSupply, newBond.issuer);
+        emit BondIssued(
+            newBond.id,
+            newBond.name,
+            newBond.faceValue,
+            newBond.maturityDate,
+            newBond.couponRate,
+            newBond.remainingSupply,
+            newBond.issuer
+        );
     }
 
     // Function to buy bonds
@@ -73,7 +96,10 @@ contract BondMarket {
     function sellBond(uint256 _id, uint256 _amount) external {
         Bond storage bond = bonds[_id];
         require(bond.id != 0, "Bond does not exist");
-        require(bondBalances[_id][msg.sender] >= _amount, "Not enough bonds owned");
+        require(
+            bondBalances[_id][msg.sender] >= _amount,
+            "Not enough bonds owned"
+        );
 
         uint256 saleAmount = bond.faceValue * _amount;
         bond.remainingSupply += _amount;
@@ -84,11 +110,33 @@ contract BondMarket {
     }
 
     // Function to retrieve bond details
-    function getBondDetails(uint256 _id) external view returns (uint256, string memory, uint256, uint256, uint256, uint256, address) {
+    function getBondDetails(
+        uint256 _id
+    )
+        external
+        view
+        returns (
+            uint256,
+            string memory,
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            address
+        )
+    {
         Bond memory bond = bonds[_id];
         require(bond.id != 0, "Bond does not exist");
 
-        return (bond.id, bond.name, bond.faceValue, bond.maturityDate, bond.couponRate, bond.remainingSupply, bond.issuer);
+        return (
+            bond.id,
+            bond.name,
+            bond.faceValue,
+            bond.maturityDate,
+            bond.couponRate,
+            bond.remainingSupply,
+            bond.issuer
+        );
     }
 
     //ToDo:CUSIP Generator?
@@ -96,5 +144,4 @@ contract BondMarket {
     //ToDo:expand buy/sell params to open bid/ask spread (not face value (i.e. market/strike))
     //ToDo:secondary market trading (list all issuance/list order book, bid/ask orders, market maker???, order types)
     //ToDo:enforce > 0% coupon??
-
 }

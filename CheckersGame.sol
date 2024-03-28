@@ -3,10 +3,19 @@ pragma solidity ^0.8.0;
 
 contract Checkers {
     // Enum to represent the different states of a square on the checkers board
-    enum SquareState { Empty, BlackPiece, RedPiece }
+    enum SquareState {
+        Empty,
+        BlackPiece,
+        RedPiece
+    }
 
     // Enum to represent the different states of the game
-    enum GameState { WaitingForPlayers, BlackTurn, RedTurn, GameOver }
+    enum GameState {
+        WaitingForPlayers,
+        BlackTurn,
+        RedTurn,
+        GameOver
+    }
 
     // Represents a player
     struct Player {
@@ -25,12 +34,24 @@ contract Checkers {
 
     // Events
     event GameCreated(address indexed player1, address indexed player2);
-    event MoveMade(address indexed player, uint8 fromX, uint8 fromY, uint8 toX, uint8 toY);
+    event MoveMade(
+        address indexed player,
+        uint8 fromX,
+        uint8 fromY,
+        uint8 toX,
+        uint8 toY
+    );
 
     // Function to create a new game
     function createGame(address _player2) external {
-        require(_player2 != msg.sender, "Player cannot play against themselves");
-        require(games[msg.sender].state == GameState.WaitingForPlayers, "You are already in a game");
+        require(
+            _player2 != msg.sender,
+            "Player cannot play against themselves"
+        );
+        require(
+            games[msg.sender].state == GameState.WaitingForPlayers,
+            "You are already in a game"
+        );
 
         games[msg.sender].players[0].addr = msg.sender;
         games[_player2].players[1].addr = _player2;
@@ -40,9 +61,17 @@ contract Checkers {
     }
 
     // Function to make a move
-    function makeMove(uint8 _fromX, uint8 _fromY, uint8 _toX, uint8 _toY) external {
+    function makeMove(
+        uint8 _fromX,
+        uint8 _fromY,
+        uint8 _toX,
+        uint8 _toY
+    ) external {
         Game storage game = games[msg.sender];
-        require(game.state != GameState.WaitingForPlayers, "Game not started yet");
+        require(
+            game.state != GameState.WaitingForPlayers,
+            "Game not started yet"
+        );
         require(game.state != GameState.GameOver, "Game is over");
 
         Player storage player;
@@ -54,7 +83,17 @@ contract Checkers {
             require(player.addr == msg.sender, "It's not your turn");
         }
 
-        require(isValidMove(game.board, player.pieceType, _fromX, _fromY, _toX, _toY), "Invalid move");
+        require(
+            isValidMove(
+                game.board,
+                player.pieceType,
+                _fromX,
+                _fromY,
+                _toX,
+                _toY
+            ),
+            "Invalid move"
+        );
 
         game.board[_toX][_toY] = game.board[_fromX][_fromY];
         game.board[_fromX][_fromY] = SquareState.Empty;
