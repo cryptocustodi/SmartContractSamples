@@ -1,5 +1,5 @@
 # SmartContractSamples
-Example Smart Contracts
+Example Smart Contracts - not real projects, need tests and SafeMath...
 
 # SampleTokenContract.sol
 This contract, MyToken, is a basic implementation of an ERC-20 token. It allows the creator to specify the token's name, symbol, decimals, and initial supply upon deployment. The contract tracks balances of token holders and allows transfers between them. It also implements approval and allowance mechanisms for delegated transfers.
